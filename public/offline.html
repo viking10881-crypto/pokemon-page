@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#06060a">
+  <title>Sin conexión · Pokédex</title>
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body {
+      display: grid; place-items: center;
+      padding: max(24px, env(safe-area-inset-top)) 24px max(24px, env(safe-area-inset-bottom));
+      background:
+        radial-gradient(60vmax 60vmax at 0% 0%, rgba(239,68,68,.22), transparent 60%),
+        radial-gradient(60vmax 60vmax at 100% 100%, rgba(99,102,241,.2), transparent 60%),
+        #06060a;
+      color: #fafafa;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+    .card {
+      width: 100%; max-width: 380px; text-align: center;
+      padding: 32px 24px; border-radius: 24px;
+      background: rgba(11,11,16,.85);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.1), 0 20px 50px rgba(0,0,0,.5);
+    }
+    .ball { width: 88px; height: 88px; margin: 0 auto 20px; animation: wobble 2.4s ease-in-out infinite; transform-origin: 50% 90%; }
+    h1 { margin: 0 0 8px; font-size: 26px; letter-spacing: -.02em; }
+    p { margin: 0 0 24px; color: #a1a1aa; line-height: 1.5; font-size: 15px; }
+    button {
+      appearance: none; border: 0; cursor: pointer;
+      padding: 12px 22px; border-radius: 12px;
+      background: #fafafa; color: #0a0a0a; font: 600 15px/1 inherit;
+    }
+    button:focus-visible { outline: 3px solid rgba(255,212,59,.7); outline-offset: 2px; }
+    .hint { margin: 16px 0 0; font-size: 12px; color: #71717a; }
+    @keyframes wobble { 0%,60%,100% { transform: rotate(0) } 70% { transform: rotate(-12deg) } 80% { transform: rotate(10deg) } 90% { transform: rotate(-5deg) } }
+    @media (prefers-reduced-motion: reduce) { .ball { animation: none; } }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <svg class="ball" viewBox="-44 -44 88 88" aria-hidden="true">
+      <circle r="40" fill="#e4e4e7"/>
+      <path d="M-40 0 A40 40 0 0 1 40 0 Z" fill="#ef4444"/>
+      <rect x="-40" y="-4" width="80" height="8" fill="#15151b"/>
+      <circle r="40" fill="none" stroke="#15151b" stroke-width="5"/>
+      <circle r="14" fill="#15151b"/>
+      <circle r="9" fill="#fafafa"/>
+    </svg>
+    <h1>Sin conexión</h1>
+    <p>Parece que el Pokémon salvaje se escapó con tu señal. Revisa tu conexión a internet e inténtalo de nuevo.</p>
+    <button type="button" onclick="location.reload()">Reintentar</button>
+    <p class="hint">Volveremos automáticamente en cuanto haya conexión.</p>
+  </main>
+  <script>
+    window.addEventListener("online", function () { location.reload() })
+    // Respaldo: "online" no siempre se dispara (p. ej. Wi-Fi sin internet que vuelve).
+    setInterval(function () {
+      if (!navigator.onLine) return
+      fetch("/", { method: "HEAD", cache: "no-store" })
+        .then(function (r) { if (r.ok) location.reload() })
+        .catch(function () {})
+    }, 5000)
+  </script>
+</body>
+</html>
